@@ -2,69 +2,409 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Under Development</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Real Estate Inspection</title>
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
     body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f6f8;
+      padding: 20px;
+    }
+    .form-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 900px;
+      margin: auto;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-section {
+      border-top: 1px solid #ddd;
+      margin-top: 20px;
+      padding-top: 20px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .entries {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th {
       background-color: #f0f0f0;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      text-align: center;
     }
-    .container {
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      max-width: 400px;
-    }
-    img.logo {
+	h1, h2, label {
+  font-family: 'Inter', sans-serif;
+}
+
+button {
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #004fa1 !important;
+}
+
+select, input, textarea {
+  transition: border 0.3s ease;
+}
+
+select:focus, input:focus, textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+button:hover {
+  opacity: 0.9;
+  transition: 0.3s;
+}
+.form-container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 1000px;
+  margin: auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.form-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px dashed #ddd;
+}
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+#entriesTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+#entriesTable th, #entriesTable td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+#entriesTable th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.download-btn {
+  margin-bottom: 10px;
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  background-color: #218838;
+}
+   img.logo {
       width: 120px;
       margin-bottom: 20px;
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: #2c3e50;
-      margin-bottom: 15px;
-    }
-    p {
-      font-size: 1.2rem;
-      color: #555;
-      margin-bottom: 30px;
-    }
-    .spinner {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #3498db;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    footer {
-      margin-top: 30px;
-      font-size: 0.9rem;
-      color: #888;
-    }
+    }	
+
   </style>
 </head>
 <body>
+<header style="
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+">
+  <img src="logo.png" alt="Logo" style="
+    height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  " />
 
-  <div class="container">
-    <img src="logo.png" alt="Logo" class="logo" />
-    <h1>🚧 Under Development</h1>
-    <p>This construction inspection tool is currently being built.<br>Please check back soon!</p>
-    <div class="spinner"></div>
-    <footer>© 2025 Real Estate Inspection Project</footer>
+  <div style="text-align: left; max-width: 600px;">
+    <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: 1px;">
+      🏗️ Real Estate Inspection Portal
+    </h1>
+    <p style="margin-top: 10px; font-size: 17px; opacity: 0.95; font-weight: 400;">
+      Floor-wise & Component-based QA for Construction Projects
+    </p>
   </div>
+</header>
+
+<!-- <header style="background: linear-gradient(90deg, #007bff, #0056b3); color: white; padding: 30px 20px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; margin-bottom: 40px;"> -->
+    <!-- <img src="logo.png" alt="Logo" class="logo" /> -->
+
+  <!-- <h1 style="margin: 0; font-size: 32px; font-weight: 600; letter-spacing: 1px;"> -->
+    <!-- 🏗️ Real Estate Inspection Portal -->
+  <!-- </h1> -->
+  <!-- <p style="margin-top: 8px; font-size: 16px; opacity: 0.9;"> -->
+    <!-- Floor-wise & Component-based QA for Construction Projects -->
+  <!-- </p> -->
+<!-- </header> -->
+
+<div class="form-container">
+  <h1>🏗️ Site Inspection Form</h1>
+  <form id="inspectionForm">
+    <div class="grid-2">
+      <div>
+  <label>Inspector Name:</label>
+  <select id="inspector" onchange="toggleInspectorInput()" required>
+    <option value="">Select</option>
+    <option>Mohammad Hussain Momin</option>
+    <option>Kashyap bhai Patel</option>
+    <option>Aspak bhai Malek</option>
+    <option>Bhavik bhai Pranami</option>
+    <option>Soban bhai Akhunji</option>
+    <option>Ashok chappa</option>
+    <option>Chahat</option>
+    <option>Ronak parmar</option>
+    <option value="custom">➕ Add your own name</option>
+  </select>
+</div>
+
+<!-- Hidden input for custom name -->
+<div id="customInspectorDiv" style="display: none;">
+  <label>Enter Your Name:</label>
+  <input type="text" id="customInspector" placeholder="Your name here" />
+</div>
+
+
+      <div>
+        <label>Date:</label>
+        <input type="date" id="date" />
+      </div>
+
+      <div>
+  <label>Project:</label>
+  <select id="project" onchange="toggleProjectInput()" required>
+    <option value="">Select</option>
+    <option>Kalrav Nest</option>
+    <option>Kalrav Season</option>
+    <option>Vaikunth Villa</option>
+    <option>Imperial</option>
+    <option>Alora</option>
+    <option>WYNN</option>
+    <option>Absolute</option>
+    <option value="custom">➕ Add your own project name</option>
+  </select>
+</div>
+
+<!-- Hidden input for custom project -->
+<div id="customProjectDiv" style="display: none;">
+  <label>Enter Project Name:</label>
+  <input type="text" id="customProject" placeholder="Your project name here" />
+</div>
+
+
+      <div>
+        <label>Tower / Block:</label>
+        <input type="text" id="tower" />
+      </div>
+
+      <div>
+        <label>Unit No.:</label>
+        <input type="text" id="unit" />
+      </div>
+
+      <div>
+  <label>Areas Being Inspected:</label>
+  <select id="areas" multiple="multiple" style="width: 100%;" required>
+    <option>Entrance</option>
+    <option>Living</option>
+    <option>Dining</option>
+    <option>Kitchen</option>
+    <option>Master Bedrooms</option>
+    <option>Bathrooms</option>
+    <option>Balcony</option>
+    <option>External Area</option>
+    <option>Terrace</option>
+    <option>Servant Room</option>
+    <option>Staircase</option>
+    <option>Common Area</option>
+    <option>Passage</option>
+    <option value="custom">➕ Other (Write your own)</option>
+  </select>
+</div>
+
+<div id="customAreaDiv" style="display: none;">
+  <label>Enter Other Area:</label>
+  <input type="text" id="customArea" placeholder="e.g. Basement, Store Room" />
+</div>
+
+
+      <div class="full-width">
+        <label>Address:</label>
+        <textarea id="address" rows="3"></textarea>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2>Component Inspection</h2>
+      <div id="componentInspectionsWrapper"></div>
+      <button type="button" onclick="addComponentInspection()">+ Add Component Inspection</button>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <button type="submit">✅ Submit Inspection</button>
+    </div>
+  </form>
+</div>
+<!-- Toggle Button -->
+<div style="text-align: center; margin: 30px 0;">
+  <button onclick="toggleEntries()" id="toggleButton" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+    📄 View Inspection Entries
+  </button>
+</div>
+
+<!-- Entries Container Hidden by Default -->
+<div id="entriesContainer" style="display: none;">
+  <div class="entries">
+    <h2>Inspection Entries</h2>
+    <button onclick="exportToExcel()" class="download-btn">
+      ⬇️ Download Excel
+    </button>
+
+    <!-- Responsive Table Wrapper -->
+    <div class="table-responsive">
+      <table id="entriesTable">
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Unit</th>
+            <th>Date</th>
+            <th>Inspector</th>
+            <th>Areas</th>
+            <th>Address</th>
+            <th>Component Inspections</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script src="https://cdn.sheetjs.com/xlsx-latest/package/xlsx.full.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      $('#areas').select2({
+        placeholder: "Select areas being inspected",
+        allowClear: false
+      });
+    });
+  </script>
+  <script src="app.js"></script>
+  <footer style="margin-top: 60px; padding: 20px; background: #f9fafb; text-align: center; border-radius: 12px; border-top: 1px solid #e0e0e0;">
+  <p style="margin: 4px 0; font-size: 14px; color: #555;">
+    &copy; 2025 <strong>Real Estate Inspection App</strong> | Crafted with ❤️ by <strong><a target="_blank" href="https://www.linkedin.com/in/malek-mohammad-313aa5144/">Mohammad Malek</a></strong>
+  </p>
+  <!-- <small style="color: #888;">Version 1.0 | Offline Mode | Excel Export Supported</small> -->
+</footer>
+
 
 </body>
 </html>

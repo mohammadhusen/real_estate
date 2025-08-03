@@ -53,8 +53,9 @@ function renderEntries() {
             <strong>Floor:</strong> ${ci.floor}<br>
             <strong>Component:</strong> ${ci.component}<br>
             <strong>Checkpoint:</strong> ${ci.checkpoint}<br>
+            <strong>location:</strong> ${ci.location}<br>
             <strong>Rating:</strong> ${ci.rating}<br>
-            <strong>Comments:</strong> ${ci.comment || '-'}<br>
+            <strong>Remark:</strong> ${ci.comment || '-'}<br>
             ${imagesHTML}
           </div>
         `;
@@ -95,14 +96,20 @@ function addComponentInspection() {
   section.className = "form-section component-inspection";
   section.innerHTML = `
     <label>Floor:</label>
-    <select class="floor" required>
-      <option value="">Select</option>
-      <option>Ground</option>
-      <option>First</option>
-      <option>Second</option>
-      <option>Third</option>
-      <option>Fourth</option>
-    </select>
+<select class="floor" onchange="toggleCustomFloor(this)" >
+  <option value="">Select</option>
+  <option>Ground</option>
+  <option>First</option>
+  <option>Second</option>
+  <option>Third</option>
+  <option>Fourth</option>
+  <option value="custom">➕ Add your own floor</option>
+</select>
+<div class="customFloorDiv" style="display: none; margin-top: 10px;">
+  <label>Enter Custom Floor:</label>
+  <input type="text" class="customFloor" placeholder="Enter floor name" />
+</div>
+
 
     <label>Component:</label>
     <select class="component" onchange="populateCheckpoints(this)" required>
@@ -116,12 +123,24 @@ function addComponentInspection() {
       <option value="electrical">Electrical</option>
       <option value="plumbing">Plumbing & Sanitary</option>
       <option value="safety">Safety & Clean</option>
+	  
     </select>
 
     <label>Checkpoint:</label>
     <select class="checkpoint" required>
       <option value="">Select Component First</option>
     </select>
+	<label>Location:</label>
+<select class="location" required>
+  <option value="">Select Location</option>
+  <option>Left</option>
+  <option>Right</option>
+  <option>Front</option>
+  <option>Back</option>
+  <option>Top</option>
+  <option>Bottom</option>
+</select>
+
 
     <label>Rating:</label>
     <select class="rating" required>
@@ -133,7 +152,7 @@ function addComponentInspection() {
       <option>Work Remain</option>
     </select>
 
-    <label>Comments:</label>
+    <label>Remark:</label>
     <textarea class="comment"></textarea>
 
     <label>Upload Photos:</label>
@@ -142,14 +161,187 @@ function addComponentInspection() {
   `;
   wrapper.appendChild(section);
 }
-
 function exportToExcel() {
+  exportAllEntries((data) => {
+    const rows = [];
+    let srNo = 1;
+
+    data.forEach((entry) => {
+      const components = entry.component_inspections || [];
+
+      if (components.length === 0) {
+        rows.push({
+          "Sr. No": srNo++,
+          Project: entry.project,
+          Unit: entry.unit,
+          Date: entry.date,
+          Inspector: entry.inspector,
+          Areas: entry.areas?.join(', ') || '',
+          Address: entry.address || '',
+          Floor: '',
+          Component: '',
+          Checkpoint: '',
+          Location: '',
+          Rating: '',
+          Comments: ''
+        });
+      } else {
+        components.forEach((ci, index) => {
+          rows.push({
+            "Sr. No": index === 0 ? srNo++ : '',
+            Project: index === 0 ? entry.project : '',
+            Unit: index === 0 ? entry.unit : '',
+            Date: index === 0 ? entry.date : '',
+            Inspector: index === 0 ? entry.inspector : '',
+            Areas: index === 0 ? (entry.areas?.join(', ') || '') : '',
+            Address: index === 0 ? (entry.address || '') : '',
+            Floor: ci.floor || '',
+            Component: ci.component || '',
+            Checkpoint: ci.checkpoint || '',
+            Location: ci.location || '',
+            Rating: ci.rating || '',
+            Comments: ci.comment || ''
+          });
+        });
+      }
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+
+    // Apply header style
+    const headerStyle = {
+      fill: {
+        patternType: "solid",
+        fgColor: { rgb: "BDD7EE" }  // light blue
+      },
+      font: {
+        bold: true,
+        color: { rgb: "000000" }
+      }
+    };
+
+    const range = XLSX.utils.decode_range(worksheet["!ref"]);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const address = XLSX.utils.encode_cell({ r: 0, c: C });
+      if (!worksheet[address]) continue;
+      worksheet[address].s = headerStyle;
+    }
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Inspection Report");
+
+    XLSX.writeFile(workbook, "Inspection_Export.xlsx");
+  });
+}
+
+function exportToExcel3() {
+  exportAllEntries((data) => {
+    const rows = [];
+
+    data.forEach((entry) => {
+      const components = entry.component_inspections || [];
+
+      if (components.length === 0) {
+        rows.push({
+          Project: entry.project,
+          Unit: entry.unit,
+          Date: entry.date,
+          Inspector: entry.inspector,
+          Areas: entry.areas?.join(', ') || '',
+          Address: entry.address || '',
+          Floor: '',
+          Component: '',
+          Checkpoint: '',
+          Location: '',
+          Rating: '',
+          Comments: ''
+        });
+      } else {
+        components.forEach((ci, index) => {
+          rows.push({
+            Project: index === 0 ? entry.project : '',
+            Unit: index === 0 ? entry.unit : '',
+            Date: index === 0 ? entry.date : '',
+            Inspector: index === 0 ? entry.inspector : '',
+            Areas: index === 0 ? (entry.areas?.join(', ') || '') : '',
+            Address: index === 0 ? (entry.address || '') : '',
+            Floor: ci.floor || '',
+            Component: ci.component || '',
+            Checkpoint: ci.checkpoint || '',
+            Location: ci.location || '',
+            Rating: ci.rating || '',
+            Comments: ci.comment || ''
+          });
+        });
+      }
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Inspection Report");
+    XLSX.writeFile(workbook, "Inspection_Export.xlsx");
+  });
+}
+
+function exportToExcel2() {
+  exportAllEntries((data) => {
+    const rows = [];
+
+    data.forEach((entry) => {
+      const components = entry.component_inspections || [];
+
+      if (components.length === 0) {
+        // Push empty row if no components
+        rows.push({
+          Project: entry.project,
+          Unit: entry.unit,
+          Date: entry.date,
+          Inspector: entry.inspector,
+          Areas: entry.areas?.join(', ') || '',
+          Address: entry.address || '',
+          Floor: '',
+          Component: '',
+          Checkpoint: '',
+          Location: '',
+          Rating: '',
+          Comments: ''
+        });
+      } else {
+        // Push one row per component
+        components.forEach((ci) => {
+          rows.push({
+            Project: entry.project,
+            Unit: entry.unit,
+            Date: entry.date,
+            Inspector: entry.inspector,
+            Areas: entry.areas?.join(', ') || '',
+            Address: entry.address || '',
+            Floor: ci.floor || '',
+            Component: ci.component || '',
+            Checkpoint: ci.checkpoint || '',
+            Location: ci.location || '',
+            Rating: ci.rating || '',
+            Comments: ci.comment || ''
+          });
+        });
+      }
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Inspection Report");
+    XLSX.writeFile(workbook, "Inspection_Export.xlsx");
+  });
+}
+
+
+function exportToExcel1() {
   exportAllEntries((data) => {
     const rows = [];
 
     data.forEach((entry) => {
       const components = (entry.component_inspections || []).map((ci, i) => {
-        return `${i + 1}) Floor: ${ci.floor}, Component: ${ci.component}, Checkpoint: ${ci.checkpoint}, Rating: ${ci.rating}, Comments: ${ci.comment || '-'}`;
+        return `${i + 1}) Floor: ${ci.floor}, Component: ${ci.component}, Checkpoint: ${ci.checkpoint},Location: ${ci.location}, Rating: ${ci.rating}, Comments: ${ci.comment || '-'}`;
       }).join(" | ");
 
       rows.push({
@@ -171,6 +363,8 @@ function exportToExcel() {
 }
 
 window.onload = function () {
+	document.getElementById("date").value = new Date().toISOString().split("T")[0];
+
   initDB();
   setTimeout(renderEntries, 500);
 
@@ -180,12 +374,17 @@ window.onload = function () {
 
     const fileReadPromises = [];
     document.querySelectorAll(".component-inspection").forEach((section) => {
-      const floor = section.querySelector(".floor").value;
+      const floorSelect = section.querySelector(".floor").value;
+const customFloor = section.querySelector(".customFloor")?.value || "";
+const floor = (floorSelect === "custom") ? customFloor : floorSelect;
+
       const component = section.querySelector(".component").value;
       const checkpoint = section.querySelector(".checkpoint").value;
       const rating = section.querySelector(".rating").value;
       const comment = section.querySelector(".comment").value;
       const photoInputs = section.querySelector(".photo").files;
+	  const location = section.querySelector(".location").value;
+
 
       const photoPromises = Array.from(photoInputs).map(file => {
         return new Promise((resolve) => {
@@ -196,7 +395,7 @@ window.onload = function () {
       });
 
       const sectionPromise = Promise.all(photoPromises).then(photos => {
-        inspectionList.push({ floor, component, checkpoint, rating, comment, photos });
+        inspectionList.push({ floor, component, checkpoint, location,rating, comment, photos });
       });
 
       fileReadPromises.push(sectionPromise);
@@ -204,9 +403,14 @@ window.onload = function () {
 
     Promise.all(fileReadPromises).then(() => {
       const entry = {
-        inspector: document.getElementById("inspector").value,
+		inspector: (document.getElementById("inspector").value === "custom")
+		  ? document.getElementById("customInspector").value
+		  : document.getElementById("inspector").value,
+
         date: document.getElementById("date").value,
-        project: document.getElementById("project").value,
+		project: (document.getElementById("project").value === "custom")
+		  ? document.getElementById("customProject").value
+		  : document.getElementById("project").value,
         tower: document.getElementById("tower").value,
         unit: document.getElementById("unit").value,
         areas: Array.from(document.getElementById("areas").selectedOptions).map(opt => opt.value),
@@ -235,3 +439,58 @@ function toggleEntries() {
     button.textContent = "📄 View Submitted Entries";
   }
 }
+function toggleInspectorInput() {
+  const inspectorSelect = document.getElementById("inspector");
+  const customDiv = document.getElementById("customInspector");
+  const wrapper = document.getElementById("customInspectorDiv");
+
+  if (inspectorSelect.value === "custom") {
+    wrapper.style.display = "block";
+    customDiv.setAttribute("required", true);
+  } else {
+    wrapper.style.display = "none";
+    customDiv.removeAttribute("required");
+  }
+}
+function toggleProjectInput() {
+  const projectSelect = document.getElementById("project");
+  const customDiv = document.getElementById("customProjectDiv");
+  const customInput = document.getElementById("customProject");
+
+  if (projectSelect.value === "custom") {
+    customDiv.style.display = "block";
+    customInput.setAttribute("required", true);
+  } else {
+    customDiv.style.display = "none";
+    customInput.removeAttribute("required");
+  }
+}
+function toggleCustomFloor(selectEl) {
+  const container = selectEl.closest(".component-inspection");
+  const customDiv = container.querySelector(".customFloorDiv");
+  const customInput = container.querySelector(".customFloor");
+
+  if (selectEl.value === "custom") {
+    customDiv.style.display = "block";
+    customInput.setAttribute("required", true);
+  } else {
+    customDiv.style.display = "none";
+    customInput.removeAttribute("required");
+  }
+}
+$(document).ready(function () {
+  $('#areas').select2({
+    placeholder: "Select areas being inspected",
+    allowClear: false
+  });
+
+  $('#areas').on('change', function () {
+    if ($(this).val().includes('custom')) {
+      $('#customAreaDiv').show();
+      $('#customArea').attr('required', true);
+    } else {
+      $('#customAreaDiv').hide();
+      $('#customArea').removeAttr('required');
+    }
+  });
+});
