@@ -3,14 +3,157 @@ const dbVersion = 1;
 let db;
 
 const checklistData = {
+	
+	wall:["Header & Stretcher Joint Issues",
+"Efflorescence",
+"Moisture Damage",
+"Misalignment / Not in Plumb",
+"Loose Plaster",
+"Right Angle Cracks",
+"Undulation",
+"Shrinkage Cracks",
+"Spalling",
+"Uneven Masonry Opening / Cut-Outs",
+"Wall Cracks",
+"Surface Damage",
+"Unevenness",
+"Popping",
+"Peeling",
+"Flaking",
+"Non-uniform Primer Application",
+"Primer Peeling / Flaking",
+"Discolouration",
+"Colour Shade Variation",
+"Broken Tiles / Stones",
+"Joint Gaps Open",
+"Defective Grouting",
+"Uneven Layout / Level / Plumb",
+"Unmatched Shades",
+"Detachment / Hollow Sound",
+"Product Manufacturing Defects",
+"Corroded Reinforcement",
+"Wall Corners Not Proper"
+],
+door:["Frame Not Installed in Level",
+"Cross Grain or Warping in Wood",
+"Loose Knots in Wooden Frame",
+"Unfinished Door frame",
+"Crack in Frame",
+"Unprofessional Carpentry or Joint Finish",
+"Incorrect Holdfasts / Missing Anchors (minimum 3 per side)",
+"Gaps Between Frame & Wall",
+"Misaligned Flush Panel",
+"Significant Cracks or Splits on Panel",
+"No Finishing on Upper / Lower Edge",
+"Damage or Swelling in Laminate",
+"Loose or Misaligned Lock Keeper Plate",
+"Missing Keeper Plate Cap",
+"Lock Bolt Not Engaging Properly",
+"Parts of Lock Missing",
+"Screws Not Properly Fitted",
+"Mechanical Defects in Lock",
+"Loose or Missing Lock Screw Cap",
+"Surface Rust on SS Fittings",
+"Door Panel Not Closing Flush",
+"Door Stopper Not Provided"
+],
+celling:["Unevenness",
+"Cracks",
+"Loose Plaster",
+"Undulation /Uneven Surface Finish",
+"Presence of Shuttering Board Imprints",
+"Honeycombing",
+"Sagging",
+"Beam Tapering",
+"Uneven Beam/Slab Depth",
+"Beam Not in Plumb",
+"Spalling or Scaling of Concrete",
+"Shrinkage or Crazing Cracks",
+"Bore Packing Issues",
+"Leakage or Dampness",
+"Corroded Reinforcement",
+"Moisture damage",
+"Water Dropping"
+],
   rcc: ["Uneven surfaces", "Visible cracks", "Undulation across spans"],
   brick: ["Pointing", "Incorrect header and stretcher jointing"],
   plaster: ["Loose plaster", "Surface dents"],
-  tile: ["Cracked tiles", "Improper leveling"],
-  door: ["Cracks on frames", "Loose hinges"],
-  window: ["Frame dents", "Air gaps when closed"],
-  electrical: ["Proper cable distribution", "Correct wire sizing"],
-  plumbing: ["Leakage at joints", "Wall outlet integrity"],
+  tile: ["Bars Exposed on Slab Surface",
+"Visible Cracks in RCC Slab",
+"Hollowness in Bed Mortar",
+"Cracked / Broken Tiles",
+"Gaps Between Tiles",
+"Skirting Tile Not Fitted",
+"Tiles Laid Without Spacer in Weather-Exposed Areas",
+"Color Shade Mismatch Between Tiles",
+"Uneven Tile Installation",
+"Water Pocket Formation (especially in wet area)",
+"Gap Between Parapet Wall & Skirting Tile",
+"Manufacturing Defects"
+],
+  window: ["Gap Between Window Frame and Wall",
+"Wooden Shims Not Removed After Leveling",
+"Inadequate Number of Fasteners",
+"Use of Wood Screws Instead of Anchor Fasteners",
+"Paint Applied Above Sealant",
+"Sealant Applied Over Protective Film",
+"Weep Hole Not Provided in Sliding Track",
+"Screw Cap Not Fitted on Lower Track",
+"Weather Strip Missing from Frame or Panel",
+"Inadequate Length Gasket Used at Glass Panel",
+"Window Sealant Deteriorated at Glass/Wall Joint",
+"Dent on Aluminium Frame",
+"Crack in Wooden Frame",
+"Unnecessary Holes in Frame",
+"Panel Rubbing Against Frame During Operation",
+"Distinct Air Gap After Closing",
+"Sliding Panel Misaligned",
+"Missing Siding Panel Edge Cap",
+"Cracked Glass (Fixed or Movable Panel)",
+"Screw Cap Not Fitted at Hinges or Lock Plate",
+"Rust on Hinges or Screws",
+"Lock Keeper Plate Damaged",
+"Window Lock Not Functioning",
+"Window Stay Damaged",
+"Inadequate Number of Screws on Hinges or Locks",
+"Drywall Screws Used Instead of Window Screws",
+"Panel Hinge Submerged into Wall",
+"Hard to operate",
+"Sliding Frame inside Debris at Bottom"
+],
+  electrical: ["Earth/phase leakage detected",
+"Phase wire not connected or terminated properly",
+"Power loss despite visible wiring",
+"Wire insulation damaged or uninsulated portions exposed",
+"Short-length wires inside boards",
+"Multiple connections from different MCBs in one board",
+"Wire laid without conduit in shaft/external area",
+"Cables properly terminated with glands/lugs",
+"No use of rope/GI wire – only cable ties",
+"Proper MS base and rubber mat provided under panels",
+"No Tape joints replaced with proper lugs and sleeves",
+"No Weather protection (shelter/shed) for external","meters/panels","No SLD (Single Line Diagram) pasted or installed inside panel","No Proper cable dressing, labeling, earthing, and ferrule marking done"],
+  plumbing: ["Main inlet valve Not accessible & operational",
+"Floor outlet pipes not in proper position & aligned with trap",
+,"Main valve not accessible and operational"
+,"blockage or damage in terrace outlet pipes"
+,"Trap and flooring cut-out not properly aligned"
+,"Gap around pipe"
+,"Concealed pipe leakage"
+,"Fixture loose due to improper FTA packing"
+,"Leakage at shower, angular valve, or spout joints"
+,"FTA set too deep inside wall"
+,"Basin trap or waste pipe leaking"
+,"Gaps between basin and counter"
+,"WC cistern leaking into bowl or soil pipe"
+,"Rainwater pipes blocked or misaligned"
+,"Floor trap dry (no water seal)"
+,"Trap cut or cracked below water level"
+,"Soil pipe leakage in lower unit"
+,"Rusted external CI/GI plumbing pipes"
+,"No pipe clamps or support"
+,"No fire barrier in plumbing shaft"
+,"Water tank fittings not sealed"],
   safety: ["Cleanliness of site", "Loose tools"]
 };
 
@@ -114,11 +257,13 @@ function addComponentInspection() {
     <label>Component:</label>
     <select class="component" onchange="populateCheckpoints(this)" required>
       <option value="">Select</option>
+      <option value="wall">Wall</option>
+      <option value="celling">Celling</option>
+      <option value="door">Door</option>
       <option value="rcc">RCC Elements</option>
       <option value="brick">Brick Masonry</option>
       <option value="plaster">Plaster Surfaces</option>
-      <option value="tile">Tile & Stone Flooring</option>
-      <option value="door">Door Frames</option>
+      <option value="tile">Tile & Stone Flooring</option>      
       <option value="window">Window Frames</option>
       <option value="electrical">Electrical</option>
       <option value="plumbing">Plumbing & Sanitary</option>
